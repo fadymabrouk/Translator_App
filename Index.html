@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>أداة الترجمة</title>
+    <style>
+        body { font-family: Tahoma, sans-serif; background: #f4f7f6; padding: 20px; }
+        .container { max-width: 500px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin: auto; }
+        textarea, select, button { width: 100%; margin-bottom: 15px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; }
+        button { background: #007BFF; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .output { background: #e9ecef; padding: 10px; border-radius: 5px; min-height: 50px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Translator App </h2>
+    
+    <textarea id="inputText" placeholder="اكتب النص هنا..."></textarea>
+    
+    <label>من لغة:</label>
+    <select id="sourceLang">
+        <option value="ar">العربية</option>
+        <option value="en">الإنجليزية</option>
+        <option value="es">الاسبانية</option>
+        <option value="de">الالمانية</option>
+    </select>
+
+    <label>إلى لغة:</label>
+    <select id="targetLang">
+        <option value="en">الإنجليزية</option>
+        <option value="ar">العربية</option>
+          <option value="esp">الاسبانية</option>
+          <option value="de">الالمانية</option>
+    </select>
+
+    <button onclick="translateText()">ترجمة</button>
+
+    <h3>Translated text:</h3>
+    <div id="outputText" class="output"></div>
+    <button onclick="copyText()" style="background: #28a745; margin-top: 10px;">Copy Text </button>
+</div>
+
+<script>
+    async function translateText() {
+        const text = document.getElementById('inputText').value;
+        const source = document.getElementById('sourceLang').value;
+        const target = document.getElementById('targetLang').value;
+
+        if (!text) {
+            alert('الرجاء كتابة نص للترجمة');
+            return;
+        }
+
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${source}|${target}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            document.getElementById('outputText').innerText = data.responseData.translatedText;
+        } catch (error) {
+            document.getElementById('outputText').innerText = 'حدث خطأ أثناء الترجمة.';
+        }
+    }
+
+    function copyText() {
+        const textToCopy = document.getElementById('outputText').innerText;
+        navigator.clipboard.writeText(textToCopy);
+        alert('تم نسحه بنجاح!');
+    }
+</script>
+
+</body>
+</html>
